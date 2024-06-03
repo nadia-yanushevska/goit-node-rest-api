@@ -13,13 +13,13 @@ export async function getContacts() {
     return JSON.parse(data);
 }
 
-export async function getContactById(id) {
+async function getContactById(id) {
     const contacts = await getContacts();
     const res = contacts.find((contact) => contact.id === id);
     return res || null;
 }
 
-export async function addContact(data) {
+async function addContact(data) {
     const contacts = await getContacts();
     const newContact = {
         id: nanoid(),
@@ -30,7 +30,19 @@ export async function addContact(data) {
     return newContact;
 }
 
-export async function deleteContactById(id) {
+async function updateContactById(id, data) {
+    const contacts = await getContacts();
+    const index = contacts.findIndex((item) => item.id === id);
+    if (index === -1) {
+        return null;
+    }
+    contacts[index] = { ...contacts[index], ...data };
+    await updateContacts(contacts);
+
+    return contacts[index];
+}
+
+async function deleteContactById(id) {
     const contacts = await getContacts();
     const idx = contacts.findIndex((contact) => contact.id === id);
     if (idx === -1) return null;
@@ -38,3 +50,11 @@ export async function deleteContactById(id) {
     await updateContacts(contacts);
     return res;
 }
+
+export default {
+    getContacts,
+    getContactById,
+    addContact,
+    deleteContactById,
+    updateContactById,
+};

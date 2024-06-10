@@ -1,54 +1,38 @@
-import fs from "fs/promises";
-import path from "path";
-import { nanoid } from "nanoid";
+import Contact from "../models/Contact.js";
+// const contactsPath = path.resolve("db", "contacts.json");
 
-const contactsPath = path.resolve("db", "contacts.json");
-
-async function updateContacts(contacts) {
-    fs.writeFile(contactsPath, JSON.stringify(contacts));
-}
+// async function updateContacts(contacts) {
+//     fs.writeFile(contactsPath, JSON.stringify(contacts));
+// }
 
 export async function getContacts() {
-    const data = await fs.readFile(contactsPath);
-    return JSON.parse(data);
+    return Contact.find();
 }
 
 async function getContactById(id) {
-    const contacts = await getContacts();
-    const res = contacts.find((contact) => contact.id === id);
-    return res || null;
+    return Contact.findOne({ _id: id });
 }
 
 async function addContact(data) {
-    const contacts = await getContacts();
-    const newContact = {
-        id: nanoid(),
-        ...data,
-    };
-    contacts.push(newContact);
-    await updateContacts(contacts);
-    return newContact;
+    return Contact.create(data);
 }
 
 async function updateContactById(id, data) {
-    const contacts = await getContacts();
-    const index = contacts.findIndex((item) => item.id === id);
-    if (index === -1) {
-        return null;
-    }
-    contacts[index] = { ...contacts[index], ...data };
-    await updateContacts(contacts);
+    return Contact.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
+}
 
-    return contacts[index];
+async function updateStatusContact(id, data) {
+    return Contact.findByIdAndUpdate(id, data, {
+        new: true,
+        runValidators: true,
+    });
 }
 
 async function deleteContactById(id) {
-    const contacts = await getContacts();
-    const idx = contacts.findIndex((contact) => contact.id === id);
-    if (idx === -1) return null;
-    const [res] = contacts.splice(idx, 1);
-    await updateContacts(contacts);
-    return res;
+    return Contact.findByIdAndDelete(id);
 }
 
 export default {
@@ -57,4 +41,5 @@ export default {
     addContact,
     deleteContactById,
     updateContactById,
+    updateStatusContact,
 };

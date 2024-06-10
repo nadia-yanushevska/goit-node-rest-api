@@ -1,9 +1,4 @@
 import Contact from "../models/Contact.js";
-// const contactsPath = path.resolve("db", "contacts.json");
-
-// async function updateContacts(contacts) {
-//     fs.writeFile(contactsPath, JSON.stringify(contacts));
-// }
 
 export async function getContacts() {
     return Contact.find();

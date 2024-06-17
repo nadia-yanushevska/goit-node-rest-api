@@ -5,10 +5,15 @@ import {
     updateContactSchema,
 } from "../schemas/contactsSchemas.js";
 import contactsService, { getContacts } from "../services/contactsServices.js";
+import getFilterWithOwnerId from "../helpers/getFilterWithOwnerId.js";
 
 export const getAllContacts = async (req, res, next) => {
     try {
-        const result = await contactsService.getContacts();
+        const { _id: owner } = req.user;
+        const filter = {
+            owner,
+        };
+        const result = await contactsService.getContacts(filter);
         res.json(result);
     } catch (error) {
         next(error);
@@ -17,8 +22,8 @@ export const getAllContacts = async (req, res, next) => {
 
 export const getOneContact = async (req, res, next) => {
     try {
-        const contactId = req.params.id;
-        const result = await contactsService.getContactById(contactId);
+        const filter = getFilterWithOwnerId(req);
+        const result = await contactsService.getContactById(filter);
         if (!result) {
             throw HttpError(404, `Not found`);
         }
@@ -30,8 +35,8 @@ export const getOneContact = async (req, res, next) => {
 
 export const deleteContact = async (req, res, next) => {
     try {
-        const contactId = req.params.id;
-        const result = await contactsService.deleteContactById(contactId);
+        const filter = getFilterWithOwnerId(req);
+        const result = await contactsService.deleteContactById(filter);
         if (!result) {
             throw HttpError(404, `Not found`);
         }
@@ -43,11 +48,12 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
     try {
+        const { _id: owner } = req.user;
         const { error } = createContactSchema.validate(req.body);
         if (error) {
             throw HttpError(400, error.message);
         }
-        const result = await contactsService.addContact(req.body);
+        const result = await contactsService.addContact({ ...req.body, owner });
 
         res.status(201).json(result);
     } catch (error) {
@@ -57,14 +63,14 @@ export const createContact = async (req, res, next) => {
 
 export const updateContact = async (req, res, next) => {
     try {
+        const filter = getFilterWithOwnerId(req);
         const { error } = updateContactSchema.validate(req.body);
         if (error) {
             throw HttpError(400, error.message);
         }
 
-        const contactId = req.params.id;
         const result = await contactsService.updateContactById(
-            contactId,
+            filter,
             req.body
         );
         if (!result) {
@@ -79,14 +85,14 @@ export const updateContact = async (req, res, next) => {
 
 export const statusContact = async (req, res, next) => {
     try {
+        const filter = getFilterWithOwnerId(req);
         const { error } = statusContactSchema.validate(req.body);
         if (error) {
             throw HttpError(400, error.message);
         }
 
-        const contactId = req.params.id;
         const result = await contactsService.updateStatusContact(
-            contactId,
+            filter,
             req.body
         );
         if (!result) {

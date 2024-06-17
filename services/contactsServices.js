@@ -1,33 +1,33 @@
 import Contact from "../models/Contact.js";
 
-export async function getContacts() {
-    return Contact.find();
+export async function getContacts(filter) {
+    return Contact.find(filter);
 }
 
-async function getContactById(id) {
-    return Contact.findOne({ _id: id });
+async function getContactById(filter) {
+    return Contact.findOne(filter);
 }
 
 async function addContact(data) {
     return Contact.create(data);
 }
 
-async function updateContactById(id, data) {
-    return Contact.findByIdAndUpdate(id, data, {
+async function updateContactById(filter, data) {
+    return Contact.findByIdAndUpdate(filter, data, {
         new: true,
         runValidators: true,
     });
 }
 
-async function updateStatusContact(id, data) {
-    return Contact.findByIdAndUpdate(id, data, {
+async function updateStatusContact(filter, data) {
+    return Contact.findByIdAndUpdate(filter, data, {
         new: true,
         runValidators: true,
     });
 }
 
-async function deleteContactById(id) {
-    return Contact.findByIdAndDelete(id);
+async function deleteContactById(filter) {
+    return Contact.findByIdAndDelete(filter);
 }
 
 export default {

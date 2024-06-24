@@ -8,6 +8,12 @@ import HttpError from "../helpers/HttpError.js";
 
 import { createToken } from "../helpers/jwt.js";
 
+import fs from "fs/promises";
+import path from "path";
+import gravatar from "gravatar";
+
+const avatarDir = path.resolve("public", "avatars");
+
 const register = async (req, res) => {
     const { email, password } = req.body;
 
@@ -18,9 +24,12 @@ const register = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
+    var url = gravatar.url(email, { s: "250" });
+
     const newUser = await authServices.signup({
         ...req.body,
         password: hashPassword,
+        avatarURL: "https:" + url,
     });
 
     res.status(201).json({

@@ -8,11 +8,7 @@ import HttpError from "../helpers/HttpError.js";
 
 import { createToken } from "../helpers/jwt.js";
 
-import fs from "fs/promises";
-import path from "path";
 import gravatar from "gravatar";
-
-const avatarDir = path.resolve("public", "avatars");
 
 const register = async (req, res) => {
     const { email, password } = req.body;

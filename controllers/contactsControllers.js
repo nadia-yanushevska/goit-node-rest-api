@@ -49,20 +49,14 @@ export const deleteContact = async (req, res, next) => {
 export const createContact = async (req, res, next) => {
     try {
         const { _id: owner } = req.user;
-        const { path: oldPath, filename } = req.file;
 
         const { error } = createContactSchema.validate(req.body);
         if (error) {
             throw HttpError(400, error.message);
         }
 
-        const newPath = path.resolve(avatarDir, filename);
-        await fs.rename(oldPath, newPath);
-        const avatar = path.join("public", "poster", filename);
-
         const result = await contactsService.addContact({
             ...req.body,
-            avatar,
             owner,
         });
 

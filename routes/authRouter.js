@@ -1,6 +1,10 @@
 import express from "express";
 import isEmptyBody from "../middlewares/isEmptyBody.js";
-import { authRegisterSchema, authSigninSchema } from "../schemas/authSchema.js";
+import {
+    authEmailSchema,
+    authRegisterSchema,
+    authSigninSchema,
+} from "../schemas/authSchema.js";
 import validateBody from "../helpers/validateBody.js";
 import authControllers from "../controllers/authControllers.js";
 import authenticate from "../middlewares/authenticate.js";
@@ -12,6 +16,15 @@ authRouter.post(
     isEmptyBody,
     validateBody(authRegisterSchema),
     authControllers.register
+);
+
+authRouter.get("/verify/:verificationCode", authControllers.verify);
+
+authRouter.post(
+    "/verify",
+    isEmptyBody,
+    validateBody(authEmailSchema),
+    authControllers.resendEmail
 );
 
 authRouter.post(

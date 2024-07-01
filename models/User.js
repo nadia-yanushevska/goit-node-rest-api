@@ -23,6 +23,13 @@ const userSchema = new Schema(
             type: String,
             default: null,
         },
+        verified: {
+            type: Boolean,
+            default: false,
+        },
+        verificationCode: {
+            type: String,
+        },
     },
     { versionKey: false, timestamps: true }
 );
